@@ -1,0 +1,279 @@
+/* styles.css */
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #757179;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    
+}
+
+/* Section Styling */
+#about {
+    /* background: linear-gradient(to bottom, #D8BFD8, #E6E5E7); */
+    padding: 100px 20px;
+    text-align: center;
+    align-content: center;
+}
+
+#about h2{
+    font-size: 3.5rem;
+    margin-right: 0;
+}
+
+/* Section Title */
+h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 2rem;
+}
+
+h3 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+p {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 1.5rem;
+    margin-right: 1.5rem;
+}
+
+/* Profile Image */
+.profile {
+    max-width: 30rem;
+    border-radius: 50%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+}
+
+/* Social Links */
+.social-links {
+display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.social-links a {
+    color: #757179;
+    transition: color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+a:hover {
+    color: #0E0F23;
+    transform: scale(1.1);
+}
+
+.social-links svg {
+    width: 40px;
+    height: 40px;
+}
+
+.tech-container{
+    margin-top: 5rem;
+}
+#about .content .tech-container h2 {
+    font-size: 2.5rem;
+}
+
+/* Header Navigation */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #0E0F23;
+    color: #E6E5E7;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 10px;
+    margin-left: auto;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #E6E5E7;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+nav ul li a:hover {
+    background: #B6B6D5;
+    color: #0E0F23;
+}
+
+/* Sections */
+section {
+    min-height: 100vh;
+    padding-bottom: 20px;
+    background: #E6E5E7;
+    border-bottom: 1px solid #B6B6D5;
+    padding-left: 2rem;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+/* General Styling */
+#experiences {
+    padding: 100px 20px;
+}
+
+.timeline-container {
+    display: flex;
+    gap: 50px;
+}
+
+/* Timeline Styling */
+.timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    width: 4px;
+    height: 100%;
+    background-color: #757179;
+}
+
+.timeline-node {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    cursor: pointer;
+}
+
+.timeline-node::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border: 3px solid #757179;
+    background-color: #E6E5E7;
+    border-radius: 50%;
+}
+
+.timeline-node .title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+.timeline-node:hover .title,
+.timeline-node.selected .title {
+    color: #0E0F23;
+    font-weight: bold;
+}
+
+.timeline-node.selected::before {
+    background-color: #0E0F23;
+    border-color: #0E0F23;
+}
+
+/* Sub-Branch Styling */
+.sub-branch {
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px;
+}
+
+.sub-node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.sub-node::before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    border: 3px solid #757179;
+    background-color: #E6E5E7;
+    border-radius: 50%;
+}
+
+.sub-node:hover .sub-title,
+.sub-node.selected .sub-title {
+    color: #B6B6D5;
+}
+
+.sub-node.selected::before {
+    background-color: #0E0F23;
+    border-color: #0E0F23;
+}
+
+.sub-title {
+    font-size: 0.9rem;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Description Styling */
+.timeline-descriptions {
+    flex: 1;
+}
+
+.description {
+    display: none;
+}
+
+.description.active {
+    display: block;
+}
+
+#projects {
+    padding-top: 2rem;
+}
+
+#contact {
+    padding-top: 2rem;
+}
+
+/* Footer */
+footer {
+    position: sticky;
+    bottom: 0;
+    background: #0E0F23;
+    color: #E6E5E7;
+    text-align: center;
+    padding: 10px;
+}
+
+.name {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 2rem;
+}
