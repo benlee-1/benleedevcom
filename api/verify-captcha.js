@@ -7,13 +7,17 @@ export default async function handler(req, res) {
 
     // Verify the token with Google
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify`;
-    const response = await fetch(verificationUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `secret=${secretKey}&response=${token}`,
-    });
+    try {
+      const response = await fetch(verificationUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `secret=${secretKey}&response=${token}`,
+      });
 
-    const data = await response.json();
+      const data = await response.json();
+    } catch (error) {
+      return res.status(500).json({ success: false, error: "Verification failed" });
+    }
 
     if (data.success) {
       res.status(200).json({ success: true });
