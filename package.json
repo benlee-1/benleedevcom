@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@aws-sdk/client-ses": "^3.744.0",
+    "googleapis": "^144.0.0",
     "vercel": "^41.0.2"
   }
 }

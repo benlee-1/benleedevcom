@@ -189,6 +189,7 @@
               id="email"
               name="email"
               class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              placeholder="Your email"
               required
             />
           </div>
@@ -201,6 +202,7 @@
               name="message"
               rows="4"
               class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              placeholder="Your message"
               required
             ></textarea>
           </div>
@@ -208,7 +210,12 @@
             class="g-recaptcha"
             data-sitekey="6Lf8fM8qAAAAAJA4qL9-0DFbyf_gwpJw9oQuW172"
           ></div>
-          <button type="submit">Send</button>
+          <button
+            type="submit"
+            class="mt-4 px-4 py-2 bg-gray-900 text-gray-200 rounded-md hover:bg-gray-700 transition-colors duration-300"
+          >
+            Send
+          </button>
         </form>
       </div>
     </section>

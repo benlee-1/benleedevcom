@@ -1,51 +1,38 @@
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+const express = require("express");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
-const sesClient = new SESClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+const router = express.Router();
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+router.post("/send-email", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
-    const { email, message } = req.body;
-
-    // Basic validation
-    if (!email || !message) {
-      return res.status(400).json({ error: "Email and message are required" });
-    }
-
-    const params = {
-      Source: process.env.FROM_EMAIL, // Your verified SES email
-      Destination: {
-        ToAddresses: [process.env.TO_EMAIL], // Where you want to receive the emails
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
       },
-      Message: {
-        Subject: {
-          Data: "New Contact Form Submission",
-          Charset: "UTF-8",
-        },
-        Body: {
-          Text: {
-            Data: `From: ${email}\n\nMessage: ${message}`,
-            Charset: "UTF-8",
-          },
-        },
-      },
+    });
+
+    let mailOptions = {
+      from: process.env.GMAIL_USER, // Use the Gmail account specified in the environment variables
+      replyTo: email, // Set the reply-to address to the user's email address
+      to: process.env.GMAIL_USER, // Send to the same Gmail account
+      subject: `Message from ${name}`,
+      text: message,
     };
 
-    const command = new SendEmailCommand(params);
-    await sesClient.send(command);
-
-    return res.status(200).json({ success: true });
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ success: "Email sent successfully" });
   } catch (error) {
-    console.error("Email error:", error);
-    return res.status(500).json({ error: "Failed to send email" });
+    res.status(500).json({ error: "Failed to send email" });
   }
-}
+});
+
+module.exports = router;
