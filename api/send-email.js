@@ -5,9 +5,9 @@ require("dotenv").config();
 const router = express.Router();
 
 router.post("/send-email", async (req, res) => {
-  const { name, email, message } = req.body;
+  const { email, message } = req.body;
 
-  if (!name || !email || !message) {
+  if (!email || !message) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
@@ -21,10 +21,10 @@ router.post("/send-email", async (req, res) => {
     });
 
     let mailOptions = {
-      from: process.env.GMAIL_USER, // Use the Gmail account specified in the environment variables
-      replyTo: email, // Set the reply-to address to the user's email address
-      to: process.env.GMAIL_USER, // Send to the same Gmail account
-      subject: `Message from ${name}`,
+      from: process.env.GMAIL_USER,
+      replyTo: email,
+      to: process.env.GMAIL_USER,
+      subject: `New Contact Form Message`,
       text: message,
     };
 

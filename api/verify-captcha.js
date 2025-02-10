@@ -15,14 +15,14 @@ export default async function handler(req, res) {
       });
 
       const data = await response.json();
+      
+      if (data.success) {
+        res.status(200).json({ success: true });
+      } else {
+        res.status(400).json({ success: false, error: data["error-codes"] });
+      }
     } catch (error) {
       return res.status(500).json({ success: false, error: "Verification failed" });
-    }
-
-    if (data.success) {
-      res.status(200).json({ success: true });
-    } else {
-      res.status(400).json({ success: false, error: data["error-codes"] });
     }
   } else {
     res.status(405).send("Method Not Allowed");
