@@ -1,10 +1,10 @@
-const express = require("express");
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+import nodemailer from "nodemailer";
 
-const router = express.Router();
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-router.post("/send-email", async (req, res) => {
   const { email, message } = req.body;
 
   if (!email || !message) {
@@ -29,10 +29,9 @@ router.post("/send-email", async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: "Email sent successfully" });
+    return res.status(200).json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: "Failed to send email" });
+    console.error("Email error:", error);
+    return res.status(500).json({ error: "Failed to send email" });
   }
-});
-
-module.exports = router;
+}

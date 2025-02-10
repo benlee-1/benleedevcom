@@ -48,10 +48,13 @@ document
   .getElementById("contact-form")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
+    console.log("Form submitted");
 
     const email = document.getElementById("email").value;
     const message = document.getElementById("message").value;
     const token = grecaptcha.getResponse();
+
+    console.log("Form data:", { email, message, hasToken: !!token });
 
     if (!token) {
       alert("Please complete the reCAPTCHA");
@@ -60,6 +63,7 @@ document
 
     try {
       // First verify the captcha
+      console.log("Verifying captcha...");
       const captchaResponse = await fetch("/api/verify-captcha", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,6 +71,7 @@ document
       });
 
       const captchaData = await captchaResponse.json();
+      console.log("Captcha response:", captchaData);
 
       if (!captchaData.success) {
         alert("reCAPTCHA verification failed");
@@ -74,6 +79,7 @@ document
       }
 
       // If captcha is verified, send the email
+      console.log("Sending email...");
       const emailResponse = await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -81,6 +87,7 @@ document
       });
 
       const emailData = await emailResponse.json();
+      console.log("Email response:", emailData);
 
       if (emailData.success) {
         alert("Message sent successfully!");
