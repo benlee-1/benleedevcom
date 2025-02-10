@@ -46,30 +46,51 @@ nodes.forEach((node) => {
 
 document
   .getElementById("contact-form")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
     const email = document.getElementById("email").value;
     const message = document.getElementById("message").value;
-    const recaptchaResponse = grecaptcha.getResponse();
+    const token = grecaptcha.getResponse();
 
-    if (!recaptchaResponse) {
-      alert("Please complete the reCAPTCHA.");
+    if (!token) {
+      alert("Please complete the reCAPTCHA");
       return;
     }
 
-    emailjs
-      .send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-        email: email,
-        message: message,
-        "g-recaptcha-response": recaptchaResponse,
-      })
-      .then(
-        function (response) {
-          alert("Email sent successfully!");
-        },
-        function (error) {
-          alert("Failed to send email. Please try again later.");
-        }
-      );
+    try {
+      // First verify the captcha
+      const captchaResponse = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+
+      const captchaData = await captchaResponse.json();
+
+      if (!captchaData.success) {
+        alert("reCAPTCHA verification failed");
+        return;
+      }
+
+      // If captcha is verified, send the email
+      const emailResponse = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, message }),
+      });
+
+      const emailData = await emailResponse.json();
+
+      if (emailData.success) {
+        alert("Message sent successfully!");
+        document.getElementById("contact-form").reset();
+        grecaptcha.reset();
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
+    }
   });
