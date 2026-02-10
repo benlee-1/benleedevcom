@@ -3,225 +3,99 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ben Lee | Personal Website</title>
+    <title>Ben Lee | Software Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Outfit:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="style.css" />
   </head>
+  <body>
+    <div class="ambient-bg" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="grid"></span>
+    </div>
 
-  <body class="font-roboto text-gray-700 leading-relaxed">
-    <header
-      class="fixed top-0 w-full bg-gray-900 text-gray-200 shadow-md z-50 flex justify-between items-center p-4"
-    >
-      <h1 class="text-2xl font-bold ml-4">Ben Lee</h1>
-      <nav>
-        <ul class="flex space-x-4 mr-4">
-          <li>
-            <a
-              href="#about"
-              class="hover:bg-gray-700 hover:scale-110 px-3 py-2 rounded transition-transform duration-300"
-              >About</a
-            >
-          </li>
-          <li>
-            <a
-              href="#contact"
-              class="hover:bg-gray-700 hover:scale-110 px-3 py-2 rounded transition-transform duration-300"
-              >Contact Me</a
-            >
-          </li>
-        </ul>
+    <header class="site-header glass">
+      <a class="brand" href="index.html">Ben Lee</a>
+      <nav class="top-nav">
+        <a href="#overview">Overview</a>
+        <a href="#links">Links</a>
+        <a href="experiences.html">Experience Map</a>
       </nav>
     </header>
 
-    <section
-      id="about"
-      class="min-h-screen bg-gradient-to-b from-purple-100 to-gray-200 py-24 text-center flex flex-col items-center"
-    >
-      <div class="max-w-4xl mx-auto">
-        <h2 class="text-4xl font-poppins font-semibold text-gray-900 mb-4">
-          About Me
-        </h2>
-        <p class="text-xl font-light mb-8">
-          Hello, I'm Ben – a software engineer who loves to create things. I'm
-          passionate about building software that makes a difference. I enjoy
-          solving problems and learning new things.
+    <main>
+      <section id="overview" class="hero section reveal">
+        <p class="eyebrow">Software Engineer</p>
+        <h1>Building clear products from complex systems.</h1>
+        <p class="lead">
+          Modern backend + product-minded development with a focus on velocity,
+          quality, and practical outcomes.
         </p>
-        <img
-          class="w-64 h-64 rounded-full shadow-lg mx-auto mb-8"
-          src="./images/profile shot.jpg"
-          alt="Profile Picture"
-        />
-        <h3 class="text-2xl font-poppins font-semibold mb-4">Links:</h3>
-        <div class="flex justify-center space-x-6 mb-8">
+        <div class="hero-actions">
           <a
+            class="btn btn-primary"
             href="https://linkedin.com/in/yeongbin-lee"
             target="_blank"
-            aria-label="LinkedIn"
-            class="text-gray-700 hover:text-gray-900 hover:scale-110 transition-transform duration-300"
+            rel="noreferrer"
+            >LinkedIn</a
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"
-              ></path>
-              <rect x="2" y="9" width="4" height="12"></rect>
-              <circle cx="4" cy="4" r="2"></circle>
-            </svg>
-          </a>
           <a
+            class="btn btn-ghost"
             href="https://github.com/benlee-1"
             target="_blank"
-            aria-label="GitHub"
-            class="text-gray-700 hover:text-gray-900 hover:scale-110 transition-transform duration-300"
+            rel="noreferrer"
+            >GitHub</a
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M12 1C6.48 1 2 5.48 2 11c0 4.41 2.87 8.16 6.84 9.49.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.6-3.37-1.34-3.37-1.34-.46-1.18-1.11-1.49-1.11-1.49-.91-.63.07-.62.07-.62 1 .07 1.53 1.03 1.53 1.03.91 1.55 2.39 1.1 2.98.84.09-.66.36-1.1.65-1.36-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 5.8a9.56 9.56 0 0 1 2.51.34c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95.37.32.69.94.69 1.9 0 1.37-.01 2.48-.01 2.81 0 .27.18.58.69.49C19.13 19.16 22 15.41 22 11c0-5.52-4.48-10-10-10z"
-              ></path>
-            </svg>
+          <a class="btn btn-ghost" href="experiences.html"
+            >Explore Experience</a
+          >
+        </div>
+      </section>
+
+      <section id="links" class="section reveal">
+        <h2>Where To Go Next</h2>
+        <div class="card-grid">
+          <a
+            class="glass card"
+            href="https://linkedin.com/in/yeongbin-lee"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <h3>LinkedIn</h3>
+            <p>Professional profile, history, and current updates.</p>
+            <span class="card-link">Open profile</span>
+          </a>
+
+          <a
+            class="glass card"
+            href="https://github.com/benlee-1"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <h3>GitHub</h3>
+            <p>Code samples, repositories, and active technical projects.</p>
+            <span class="card-link">Open GitHub</span>
+          </a>
+
+          <a class="glass card" href="experiences.html">
+            <h3>Experience Map</h3>
+            <p>
+              A vertical, metro-style timeline of experience, skills, and key
+              milestones.
+            </p>
+            <span class="card-link">Open explorer</span>
           </a>
         </div>
-        <div class="mt-12">
-          <h3 class="text-2xl font-poppins font-semibold mb-4">
-            Technologies I Work With:
-          </h3>
-          <div class="flex justify-center space-x-6">
-            <a
-              href="https://nodejs.org"
-              target="_blank"
-              aria-label="NodeJS"
-              class="flex flex-col items-center text-gray-700 hover:text-gray-900 hover:scale-110 transition-transform duration-300"
-            >
-              <img
-                src="https://cdn.worldvectorlogo.com/logos/nodejs-icon.svg"
-                alt="NodeJS"
-                class="w-12 h-12 mb-2"
-              />
-              <p>NodeJS</p>
-            </a>
-            <a
-              href="https://www.typescriptlang.org"
-              target="_blank"
-              aria-label="TypeScript"
-              class="flex flex-col items-center text-gray-700 hover:text-gray-900 hover:scale-110 transition-transform duration-300"
-            >
-              <img
-                src="https://cdn.worldvectorlogo.com/logos/typescript.svg"
-                alt="TypeScript"
-                class="w-12 h-12 mb-2"
-              />
-              <p>TypeScript</p>
-            </a>
-            <a
-              href="https://reactjs.org"
-              target="_blank"
-              aria-label="React"
-              class="flex flex-col items-center text-gray-700 hover:text-gray-900 hover:scale-110 transition-transform duration-300"
-            >
-              <img
-                src="https://cdn.worldvectorlogo.com/logos/react-2.svg"
-                alt="React"
-                class="w-12 h-12 mb-2"
-              />
-              <p>React</p>
-            </a>
-            <a
-              href="https://learn.microsoft.com/en-us/dotnet/csharp/"
-              target="_blank"
-              aria-label="C#"
-              class="flex flex-col items-center text-gray-700 hover:text-gray-900 hover:scale-110 transition-transform duration-300"
-            >
-              <img
-                src="https://cdn.worldvectorlogo.com/logos/c--4.svg"
-                alt="C#"
-                class="w-12 h-12 mb-2"
-              />
-              <p>C#</p>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
-    <section id="contact" class="min-h-screen py-24 bg-gray-200 text-center">
-      <div class="max-w-4xl mx-auto">
-        <h2 class="text-4xl font-poppins font-semibold text-gray-900 mb-4">
-          Contact Me
-        </h2>
-        <p class="text-xl font-light mb-8">
-          Feel free to reach out to me with any questions or opportunities. I'm
-          always looking to connect with new people and learn new things!
-        </p>
-        <script
-          src="https://www.google.com/recaptcha/api.js"
-          async
-          defer
-        ></script>
-
-        <form id="contact-form" class="text-left">
-          <div class="mb-4">
-            <label for="email" class="block text-lg font-medium text-gray-700"
-              >Email</label
-            >
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-              placeholder="Your email"
-              required
-            />
-          </div>
-          <div class="mb-4">
-            <label for="message" class="block text-lg font-medium text-gray-700"
-              >Message</label
-            >
-            <textarea
-              id="message"
-              name="message"
-              rows="4"
-              class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-              placeholder="Your message"
-              required
-            ></textarea>
-          </div>
-          <div
-            class="g-recaptcha"
-            data-sitekey="6Lf8fM8qAAAAAJA4qL9-0DFbyf_gwpJw9oQuW172"
-          ></div>
-          <button
-            type="submit"
-            class="mt-4 px-4 py-2 bg-gray-900 text-gray-200 rounded-md hover:bg-gray-700 transition-colors duration-300"
-          >
-            Send
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <footer class="bg-gray-900 text-gray-200 text-center py-4">
-      <p>&copy; 2025 Ben Lee. All rights reserved.</p>
+    <footer class="site-footer">
+      <p>&copy; 2026 Ben Lee</p>
     </footer>
 
     <script src="script.js"></script>
