@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body class="experience-page">
     <div class="ambient-bg" aria-hidden="true">
       <span class="blob blob-1"></span>
       <span class="blob blob-2"></span>
@@ -31,20 +31,42 @@
 
     <main class="experience-layout">
       <aside class="rail glass" aria-label="Experience stops">
-        <h2>Experience Line</h2>
+        <h2>Career Transit Map</h2>
+        <p class="rail-subtitle">
+          Scroll or use arrow keys to travel each stop.
+        </p>
+        <div class="route-legend" aria-label="Route legend">
+          <span class="route-pill route-core">Core Line</span>
+          <span class="route-pill route-build">Build Line</span>
+          <span class="route-pill route-exp">Experience Line</span>
+        </div>
         <div class="rail-track">
-          <a class="stop active" href="#stop-1" data-stop-link="stop-1">Summary</a>
-          <a class="stop" href="#stop-2" data-stop-link="stop-2">Paycom</a>
-          <a class="stop" href="#stop-3" data-stop-link="stop-3">Valent Partners</a>
-          <a class="stop" href="#stop-4" data-stop-link="stop-4">Fidelity</a>
-          <a class="stop" href="#stop-5" data-stop-link="stop-5">Technical Expertise</a>
-          <a class="stop" href="#stop-6" data-stop-link="stop-6">Projects</a>
-          <a class="stop" href="#stop-7" data-stop-link="stop-7">Education</a>
+          <a class="stop line-core active" href="#stop-1" data-stop-link="stop-1"
+            ><span class="stop-code">S1</span><span>Summary</span></a
+          >
+          <a class="stop line-exp" href="#stop-2" data-stop-link="stop-2"
+            ><span class="stop-code">E2</span><span>Paycom</span></a
+          >
+          <a class="stop line-exp" href="#stop-3" data-stop-link="stop-3"
+            ><span class="stop-code">E3</span><span>Valent Partners</span></a
+          >
+          <a class="stop line-exp" href="#stop-4" data-stop-link="stop-4"
+            ><span class="stop-code">E4</span><span>Fidelity</span></a
+          >
+          <a class="stop line-core" href="#stop-5" data-stop-link="stop-5"
+            ><span class="stop-code">C5</span><span>Technical Expertise</span></a
+          >
+          <a class="stop line-build" href="#stop-6" data-stop-link="stop-6"
+            ><span class="stop-code">P6</span><span>Projects</span></a
+          >
+          <a class="stop line-core" href="#stop-7" data-stop-link="stop-7"
+            ><span class="stop-code">A7</span><span>Education</span></a
+          >
         </div>
       </aside>
 
       <section class="experience-content" aria-label="Experience details">
-        <article id="stop-1" class="stop-panel glass" data-stop-panel>
+        <article id="stop-1" class="stop-panel glass line-core" data-stop-panel>
           <h3>Ben Lee</h3>
           <p class="stop-meta">Backend Software Engineer</p>
           <p>
@@ -73,7 +95,7 @@
           </ul>
         </article>
 
-        <article id="stop-2" class="stop-panel glass" data-stop-panel>
+        <article id="stop-2" class="stop-panel glass line-exp" data-stop-panel>
           <h3>Software Developer III, Paycom</h3>
           <p class="stop-meta">Irving, TX | March 2025 - February 2026</p>
           <p>
@@ -93,7 +115,7 @@
           </ul>
         </article>
 
-        <article id="stop-3" class="stop-panel glass" data-stop-panel>
+        <article id="stop-3" class="stop-panel glass line-exp" data-stop-panel>
           <h3>Technical Consultant / Software Engineer, Valent Partners</h3>
           <p class="stop-meta">Dallas, TX | June 2022 - March 2025</p>
           <p>
@@ -120,7 +142,7 @@
           </ul>
         </article>
 
-        <article id="stop-4" class="stop-panel glass" data-stop-panel>
+        <article id="stop-4" class="stop-panel glass line-exp" data-stop-panel>
           <h3>Intern, Consolidated Data Services, Fidelity Investments</h3>
           <p class="stop-meta">Westlake, TX | June 2021 - August 2021</p>
           <p>
@@ -133,7 +155,7 @@
           </ul>
         </article>
 
-        <article id="stop-5" class="stop-panel glass" data-stop-panel>
+        <article id="stop-5" class="stop-panel glass line-core" data-stop-panel>
           <h3>Technical Expertise</h3>
           <p class="stop-meta">Backend, Architecture, Data, Cloud, DevOps</p>
           <p>
@@ -164,7 +186,7 @@
           </ul>
         </article>
 
-        <article id="stop-6" class="stop-panel glass" data-stop-panel>
+        <article id="stop-6" class="stop-panel glass line-build" data-stop-panel>
           <h3>Selected Projects</h3>
           <p class="stop-meta">Recent Build Highlights</p>
           <p>
@@ -187,7 +209,7 @@
           </ul>
         </article>
 
-        <article id="stop-7" class="stop-panel glass" data-stop-panel>
+        <article id="stop-7" class="stop-panel glass line-core" data-stop-panel>
           <h3>Education</h3>
           <p class="stop-meta">Southern Methodist University | May 2022</p>
           <p>
