@@ -116,6 +116,12 @@ body {
   color: var(--text-primary);
 }
 
+.top-nav a:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 3px;
+  border-radius: 0.35rem;
+}
+
 main {
   width: min(1080px, calc(100% - 2rem));
   margin: 0 auto;
@@ -179,6 +185,11 @@ h1 {
   transform: translateY(-2px);
 }
 
+.btn:focus-visible {
+  outline: 2px solid #f2e9ff;
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background: linear-gradient(125deg, #7d3ef5, #ac81ff);
   color: #fdfbff;
@@ -226,6 +237,15 @@ h1 {
 .card-link {
   color: var(--accent-strong);
   font-size: 0.95rem;
+}
+
+.proof-card {
+  cursor: default;
+}
+
+.proof-card:hover {
+  transform: none;
+  border-color: var(--line);
 }
 
 .site-footer {
