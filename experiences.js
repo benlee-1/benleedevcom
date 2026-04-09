@@ -1,3 +1,19 @@
+/* ── Page transition ── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.add('page-loaded');
+});
+
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href]');
+  if (!link) return;
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('http') || link.target === '_blank') return;
+
+  e.preventDefault();
+  document.body.classList.add('page-leaving');
+  setTimeout(() => { window.location.href = href; }, 250);
+});
+
 const stopLinks = Array.from(document.querySelectorAll('[data-stop-link]'));
 const stopPanels = Array.from(document.querySelectorAll('[data-stop-panel]'));
 const siteHeader = document.querySelector('.site-header');
@@ -64,6 +80,46 @@ stopLinks.forEach((link) => {
   });
 });
 
+/* ── Panel entrance animations ── */
+const panelObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  },
+  { threshold: 0.12 }
+);
+
+stopPanels.forEach((panel) => panelObserver.observe(panel));
+
+/* ── Scroll progress bar ── */
+const scrollBar = document.querySelector('.scroll-progress');
+
+function updateScrollProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
+  if (scrollBar) {
+    scrollBar.style.transform = `scaleX(${ratio})`;
+  }
+}
+
+/* ── Header hide on scroll down / show on scroll up ── */
+let lastScrollY = window.scrollY;
+
+function updateHeader() {
+  const currentY = window.scrollY;
+  if (siteHeader && currentY > lastScrollY + 5 && currentY > 80) {
+    siteHeader.classList.add('header-hidden');
+  } else if (siteHeader && currentY < lastScrollY - 5) {
+    siteHeader.classList.remove('header-hidden');
+  }
+  lastScrollY = currentY;
+}
+
+/* ── Combined scroll handler ── */
 let isTicking = false;
 function requestActiveSync() {
   if (isTicking) {
@@ -74,6 +130,8 @@ function requestActiveSync() {
   window.requestAnimationFrame(() => {
     isTicking = false;
     syncActiveStop();
+    updateScrollProgress();
+    updateHeader();
   });
 }
 
@@ -104,6 +162,13 @@ window.addEventListener('keydown', (event) => {
 
   const nextId = stopLinks[nextIndex].dataset.stopLink;
   goToStop(nextId);
+});
+
+/* ── Cursor spotlight ── */
+const root = document.documentElement;
+window.addEventListener('pointermove', (event) => {
+  root.style.setProperty('--mx', event.clientX + 'px');
+  root.style.setProperty('--my', event.clientY + 'px');
 });
 
 syncActiveStop();

@@ -27,6 +27,17 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+body.page-loaded {
+  opacity: 1;
+}
+
+body.page-leaving {
+  opacity: 0;
+  transition-duration: 250ms;
 }
 
 .ambient-bg {
@@ -81,6 +92,11 @@ body {
   justify-content: space-between;
   padding: 0.9rem 1.2rem;
   border-radius: 1rem;
+  transition: transform 300ms ease;
+}
+
+.site-header.header-hidden {
+  transform: translateY(calc(-100% - 2rem));
 }
 
 .glass {
@@ -244,8 +260,8 @@ h1 {
 }
 
 .proof-card:hover {
-  transform: none;
-  border-color: var(--line);
+  transform: translateY(-3px) scale(1.015);
+  border-color: rgba(208, 182, 255, 0.5);
 }
 
 .site-footer {
@@ -264,6 +280,12 @@ h1 {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Hero handles its own stagger — skip section-level reveal */
+.hero.reveal {
+  opacity: 1;
+  transform: none;
 }
 
 .experience-layout {
@@ -505,6 +527,120 @@ h1 {
   background: linear-gradient(to bottom, #ffd0bc, #ff8f5b);
 }
 
+/* ── Cursor spotlight ── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(160, 109, 255, 0.045),
+    transparent 70%
+  );
+  transition: background 80ms ease;
+}
+
+/* ── Scroll progress bar ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 100;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  pointer-events: none;
+}
+
+/* ── Hero stagger entrance ── */
+.hero > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 520ms ease, transform 520ms ease;
+  transition-delay: var(--delay, 0ms);
+}
+
+.hero.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Card hover glow ── */
+.proof-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.proof-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  background: radial-gradient(
+    300px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(160, 109, 255, 0.15),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.proof-card:hover::after {
+  opacity: 1;
+}
+
+/* ── Staggered card entrance ── */
+#links .proof-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 500ms ease, transform 500ms ease, border-color 180ms ease;
+  transition-delay: var(--delay, 0ms);
+}
+
+#links.visible .proof-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Experience panel entrance ── */
+.stop-panel {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+
+.stop-panel.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Section divider ── */
+.section-divider {
+  width: 60%;
+  margin: 0 auto 3.2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  position: relative;
+}
+
+.section-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+  box-shadow: 0 0 12px 4px rgba(160, 109, 255, 0.4);
+  transform: translate(-50%, -50%);
+}
+
 @keyframes drift {
   0%,
   100% {
@@ -550,5 +686,21 @@ h1 {
 
   .hero {
     min-height: 480px;
+  }
+}
+
+/* ── Accessibility: reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    opacity: 1 !important;
   }
 }
