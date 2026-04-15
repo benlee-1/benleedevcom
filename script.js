@@ -1,5 +1,8 @@
 /* ── Page transition ── */
-document.addEventListener('DOMContentLoaded', () => {
+// Use pageshow instead of DOMContentLoaded so back/forward cache restores
+// also un-blank the page (bfcache skips DOMContentLoaded entirely).
+window.addEventListener('pageshow', () => {
+  document.body.classList.remove('page-leaving');
   document.body.classList.add('page-loaded');
 });
 

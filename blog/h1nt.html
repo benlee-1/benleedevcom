@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Outfit:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
@@ -50,134 +51,132 @@
 
       <article class="post-body">
 
-        <h2>The Problem with Interview Prep</h2>
+        <h2>The Core Bet</h2>
         <p>
-          Most technical interview prep is passive. You watch a video, skim a solution, do a quick mental nod of "I get it," and move on. Then you sit in the real interview and discover that understanding a solution and being able to produce one under pressure are completely different skills.
+          Most interview prep is passive consumption. You watch a walkthrough, nod along, and build false confidence. The actual skill — articulating a solution under pressure, defending tradeoffs, adapting when an interviewer pushes back — only develops through active retrieval. You have to be forced to produce an answer, not just recognize one.
         </p>
         <p>
-          The skill that matters is retrieval under pressure: articulating your reasoning clearly, defending tradeoffs, adapting when the interviewer pushes back. That skill is built through active practice with feedback — not by watching someone else solve a problem.
-        </p>
-        <p>
-          That's the premise of h1nt. A conversational AI tutor that forces you to actually answer questions, grills you when your answer is vague, and teaches you the concept if you're stuck — rather than just showing you the solution.
-        </p>
-        <p>
-          I named the AI persona the "Tiger Parent." Demanding. Specific. Not satisfied with "I think this is roughly O(n log n)" — it wants the reasoning, the edge cases, the tradeoffs. Strict, but not mean. The goal is rigor, not anxiety.
+          h1nt is built around that constraint. You get a personalized question bank, a streaming AI tutor that evaluates your answers and asks follow-ups, and a mock interview locked behind a Readiness Score. The tutor's persona is the "Tiger Parent" — demanding, specific, not satisfied with hand-wavy answers. If you say "I think this is O(n log n)," it asks you to prove it.
         </p>
 
-        <h2>The Study Plan Machine</h2>
+        <h2>System Design: Five Stages, One Direction</h2>
         <p>
-          When you onboard into h1nt, you specify a target company, role (frontend / backend / full-stack / ML), experience level, and how many days you have to prep. The app generates a personalized study plan: a question bank weighted toward the skills that matter for your profile, organized into a session flow.
+          The application has a strict linear flow: <strong>onboarding → study plan → tutor → mock → results</strong>. State flows forward — there's no branching between stages mid-session.
         </p>
         <p>
-          The smarter part is what happens during your sessions. Questions aren't served in random order — they follow a priority queue:
-        </p>
-        <ol>
-          <li>Questions matching your identified weak areas, sorted by difficulty</li>
-          <li>Unseen questions, sorted by difficulty</li>
-          <li>Previously failed questions, sorted by difficulty (for closure)</li>
-        </ol>
-        <p>
-          "Weak areas" are derived from your answer history: topics where you've failed questions or triggered the "I Don't Know" mode repeatedly surface first. This is all computed client-side in Zustand — no server-side ML, just a scoring function applied to stored question history. It's simple but surprisingly effective.
-        </p>
-
-        <h2>The AI Tutor Architecture</h2>
-        <p>
-          The tutor lives in a Next.js 16 App Router API route at <code>/api/tutor</code>. Each request carries the current question, the user's answer (or a "teach me" signal), and the conversation history. The route calls Claude Sonnet 4.6 via the Vercel AI SDK v6 and streams the response back to the client.
-        </p>
-
-        <h3>The Tiger Parent System Prompt</h3>
-        <p>
-          Getting the persona right took more iteration than any other part of the project. The constraints are tighter than they appear:
+          I chose Zustand for state management and persisted each store to <code>localStorage</code>. Three stores carry session state:
         </p>
         <ul>
-          <li>Be demanding enough that the user feels genuinely challenged</li>
-          <li>Be specific enough that feedback is actionable, not just "wrong"</li>
-          <li>Never just give away the answer on evaluation — push the user to arrive there</li>
-          <li>On teach mode, explain fully and clearly — the user has already admitted they don't know</li>
-          <li>Keep responses concise — the user is practicing, not reading an essay</li>
+          <li><code>interview.store</code> — company, role, question bank, preferred language, readiness score</li>
+          <li><code>tutor.store</code> — message history, answered question IDs, failed question IDs, weak areas</li>
+          <li><code>mock.store</code> — mock interview turns, final grade report</li>
         </ul>
         <p>
-          The final system prompt establishes the persona explicitly and gives the model a decision tree for how to respond depending on whether it's in evaluate or teach mode. Separating the two modes into distinct code paths (rather than a single ambiguous prompt) was the change that most improved response quality.
+          The linear flow meant I could keep each store relatively flat — no store needs to know about the others' internal state, only the data it hands forward to the next stage. In hindsight, the session lifecycle would benefit from an explicit state machine (the onboarding → tutor → mock transitions have implicit guards that a state machine would make clearer), but Zustand was the right call for moving fast on v1.
         </p>
 
-        <h3>The "I Don't Know" Teach Mode</h3>
+        <h2>The Question Priority Queue</h2>
         <p>
-          Next to the submit button in the tutor interface is an "I Don't Know" button. Clicking it triggers teach mode: instead of evaluating an answer, the AI explains the concept step by step — the what, the why, the tradeoffs, an example. The question is automatically marked as failed, but the explanation lands in the conversation history. You can scroll back to review it later.
+          Questions aren't served randomly. On each call to "next question," the selector runs a priority function over the full question bank:
+        </p>
+        <ol>
+          <li>Unseen questions in identified weak-area topics, sorted by difficulty ascending</li>
+          <li>Unseen questions in all other topics, sorted by difficulty ascending</li>
+          <li>Previously failed questions, sorted by difficulty ascending</li>
+        </ol>
+        <p>
+          "Weak areas" are derived lazily — after every three answered questions, the system scans <code>failedQuestionIds</code> for topic patterns and updates the weak area set in the store. No server-side ML, no separate inference step. It's a scoring function over localStorage state.
         </p>
         <p>
-          The design rationale: penalizing "I Don't Know" too heavily would discourage honesty. Rewarding it too much would let users game the system. Marking it as a fail but providing the explanation immediately is the right balance — you lose a point, but you learn the thing you didn't know.
+          This is simpler than it sounds and works better than I expected. Most users have real weak areas, and surfacing them early creates the "it knows me" feeling that makes the product feel smart.
+        </p>
+
+        <h2>The Streaming Tutor: Request Flow and Context Management</h2>
+        <p>
+          The tutor lives at <code>/api/tutor</code> — a Next.js 16 App Router route that streams a response via the Vercel AI SDK v6 with Claude Sonnet 4.6 as the model. Each request carries:
+        </p>
+        <ul>
+          <li>The current question (text + type + topic)</li>
+          <li>A mode flag: <code>'evaluate'</code> or <code>'teach'</code></li>
+          <li>The user's answer (empty string on teach mode)</li>
+          <li>The last N turns of conversation history for context continuity</li>
+        </ul>
+        <p>
+          I deliberately don't send the full conversation history — only the last few turns. Sending everything grows the context window fast, increases latency, and doesn't improve response quality for a Q&A tutor (the model doesn't need to remember what happened five questions ago, just the current exchange). The tradeoff is that the tutor can't reference earlier questions by memory, but I haven't found that to be a real UX gap.
+        </p>
+
+        <h3>Evaluate vs. Teach Mode</h3>
+        <p>
+          The route handles two distinct behaviors. In evaluate mode, the prompt instructs the model to assess the answer: grade it, explain what was right and wrong, push back if the reasoning is incomplete, but don't just give the answer away. In teach mode (triggered by "I Don't Know"), the prompt switches: explain the concept fully and clearly, the user has already admitted they don't know it.
+        </p>
+        <p>
+          I tried a single prompt with a conditional instruction ("if the user says they don't know, explain instead of evaluate") and it worked sometimes, but the mode boundary was fuzzy. Splitting into explicit mode-specific prompts made the behavior reliable.
         </p>
 
         <h3>The Empty-Stream Bug</h3>
         <p>
-          For a few days during development, the tutor response was consistently empty. The request was hitting the API route, Claude was responding (I could see it in logs), but the client received nothing.
+          For a stretch in development, the tutor response streamed in as empty. The API route was firing, Claude was responding (visible in server logs), but the client rendered nothing.
         </p>
         <p>
-          Root cause: the Vercel AI SDK v6 has two response helpers — <code>toUIMessageStreamResponse()</code> and <code>toTextStreamResponse()</code>. I was using <code>toUIMessageStreamResponse()</code>, which sends a structured stream format with message metadata headers that the AI SDK's built-in message parser expects. My client wasn't using the SDK's message parsing hook — it was reading the stream directly as raw text with a <code>ReadableStream</code> decoder, which couldn't parse the structured format and produced an empty string.
+          The Vercel AI SDK v6 has two streaming response helpers: <code>toUIMessageStreamResponse()</code> and <code>toTextStreamResponse()</code>. I was using the former, which wraps the stream in a structured message envelope — metadata headers, message IDs, role annotations. That format is designed for the SDK's built-in client hooks (<code>useChat</code>, etc.) which parse the envelope automatically.
         </p>
         <p>
-          Fix: switch to <code>toTextStreamResponse()</code>, which streams raw text chunks with no metadata envelope. The client reads token by token, appends to the displayed message, done. One line change.
+          My client was reading the stream as raw text with a <code>ReadableStream</code> decoder. It read the envelope prefix, couldn't parse it as content, and produced an empty string. Switching to <code>toTextStreamResponse()</code> — which emits raw token chunks with no wrapper — fixed it. One line change after about two hours of debugging.
         </p>
         <p>
-          Lesson: when using a streaming SDK, be very explicit about which response format your client expects. The structured message format is powerful for multi-turn chat with the SDK's built-in hooks — but if you're managing message state yourself, raw text is simpler and less fragile.
+          The deeper lesson: streaming APIs have implicit contracts between server response format and client reader. If you're managing message state yourself instead of using the SDK's hooks, use the simplest format. The structured message stream is powerful for the SDK's use case; it's friction for everyone else.
         </p>
 
-        <h2>Monaco Editor Integration</h2>
+        <h2>Monaco Editor and the SSR Problem</h2>
         <p>
-          For coding and LeetCode-style questions, h1nt shows a Monaco editor — the same engine that powers VS Code. Syntax highlighting, keyboard shortcuts, multi-language support. It turns a coding question from "type into a textarea" into something that actually feels like an IDE.
+          Coding and LeetCode-style questions render a Monaco editor — the VS Code engine. The UX reason is straightforward: if someone is practicing a coding interview, the input should feel like an IDE, not a textarea. Syntax highlighting and keyboard shortcuts matter.
         </p>
         <p>
-          Monaco is a browser-only library — it manipulates the DOM directly and has no concept of server-side rendering. In Next.js, importing it naively causes a build crash.
-        </p>
-        <p>
-          The fix is dynamic import with SSR disabled:
+          The integration problem is that Monaco manipulates the DOM directly on load and has no server-side rendering path. In Next.js, a naive import crashes the build. The fix is dynamic import with <code>ssr: false</code>:
         </p>
         <pre><code>const MonacoEditor = dynamic(
   () => import('@monaco-editor/react'),
   { ssr: false }
 );</code></pre>
         <p>
-          This defers the Monaco bundle to client-side only. The question type system (<code>text</code>, <code>coding</code>, <code>leetcode</code>) determines which input renders: text questions get a plain <code>&lt;textarea&gt;</code>, coding questions get Monaco with the user's preferred language (set at onboarding, defaulting to Python).
+          This defers the Monaco bundle entirely to the client. The question type system (<code>'text' | 'coding' | 'leetcode'</code>) determines which input renders. Text questions get a <code>&lt;textarea&gt;</code>; coding questions get Monaco initialized with the user's preferred language from the interview store.
         </p>
 
         <h2>The Readiness Score Gate</h2>
         <p>
-          You can't enter the mock interview until your Readiness Score hits 70 out of 100. The score is computed across your session: each question has a topic weight and a difficulty multiplier; passing earns weighted points, failing deducts them. The running score is normalized to 0–100 and updated every three questions.
+          The mock interview is locked until the Readiness Score hits 70/100. The score is a weighted sum: each question carries a topic weight and a difficulty multiplier; passing adds points, failing deducts proportionally. Score is normalized to 0–100 and updated every three questions.
         </p>
         <p>
-          The gate exists for a specific reason: users who skip straight to the mock interview get a bad score, feel defeated, and don't come back. Users who complete the tutor session first arrive at the mock with genuine confidence and a much higher pass rate. Gating by demonstrated readiness — not by time spent — is the right signal.
+          The gate is designed to prevent a specific failure mode: users who skip the tutor, go straight to the mock, fail, and don't come back. Users who've put in tutor time arrive at the mock with real confidence and better outcomes. Gating by demonstrated readiness — a behavioral signal — is more accurate than gating by time-on-page.
         </p>
         <p>
-          Mock mode is different from tutor mode in deliberate ways: no hints, no "I Don't Know" option, timed responses, no feedback mid-session. The full graded report at the end breaks down performance by topic, identifies your weakest areas, and links back to the tutor for targeted review.
+          Mock mode enforces deliberate constraints: no hints, no "I Don't Know" option, timed responses. The final report breaks down scores by topic and links back to the tutor for targeted review.
         </p>
 
-        <h2>Question History UX</h2>
+        <h2>Question History as a Derived View</h2>
         <p>
-          The left panel of the tutor interface shows a scrollable list of every question you've answered in the session, with a green or red dot indicating pass or fail. Clicking any question loads a read-only view of that question's full exchange — your answer, the tutor's feedback, and any teaching explanation if you triggered it.
+          The left panel of the tutor UI shows a list of answered questions with pass/fail indicators. Clicking one loads a read-only view of that question's full exchange.
         </p>
         <p>
-          The implementation is clean because every <code>TutorMessage</code> in the Zustand store is tagged with a <code>questionId</code>. The review view filters the full conversation array by that ID. No separate data structure, no extra API calls — the chat history is the source of truth, and the question list is a derived view of it.
+          The implementation is clean because of one early decision: every <code>TutorMessage</code> in the Zustand store is tagged with the <code>questionId</code> it belongs to. The review view is just a filter on the flat message array. There's no separate "review" store, no additional API calls — the conversation array is the source of truth and the question list is a derived view of it.
         </p>
 
         <div class="post-callout">
-          <p>The pattern of tagging messages with question IDs and deriving review state from the flat array is one of those decisions that seems obvious after you make it but isn't obvious before. The alternative — a separate "review" store — would have added sync complexity for no gain.</p>
+          <p>Tagging messages with question IDs seems obvious in hindsight. The alternative I almost went with — a parallel review store that duplicates the relevant messages — would have created a sync problem with no upside. Worth noting: the right data structure decision is the one that makes derived state cheap to compute.</p>
         </div>
 
         <h2>What I'd Do Differently</h2>
         <p>
-          A few honest retrospective notes:
+          <strong>Model the session as a state machine from day one.</strong> The five stages — onboarding, study plan, tutor, mock, results — have real transition guards (you can't enter mock without a 70+ readiness score; you can't enter tutor without a generated study plan). Right now those guards are scattered across component-level conditionals. An explicit state machine with typed transitions would make the flow much easier to test and extend.
         </p>
         <p>
-          <strong>State management complexity.</strong> Zustand was the right choice for starting fast, but the interview session store grew to the point where state transitions are hard to reason about. A state machine (XState, or even a hand-rolled reducer with explicit transition types) would have made the session lifecycle — onboarding → study plan → tutor → mock → results — much clearer and easier to test.
+          <strong>Prototype the Tiger Parent prompt in isolation.</strong> I iterated the system prompt maybe a dozen times before it felt right. Earlier versions were either too passive (restating the question), too harsh (penalizing correct-but-imprecise answers), or too verbose (writing paragraphs when two sentences would do). If I were starting over, I'd prototype the persona against a fixed set of test questions in a standalone script before embedding it in the app. Faster feedback loop.
         </p>
         <p>
-          <strong>The Tiger Parent prompt.</strong> It took roughly a dozen significant revisions to land on a system prompt that was demanding without being condescending, and educational without being verbose. The final version works well, but earlier versions were either too passive (just restating the problem) or too harsh (flagging correct-but-imprecise answers as wrong). If I were starting over, I'd prototype the persona in isolation first rather than embedded in the full app context.
+          <strong>The readiness score weights need real data.</strong> Right now they're calibrated by feel, not against actual interview outcomes. The scoring formula is directionally right but the specific weights are arbitrary. Instrumenting pass/fail data at the mock stage and running even a simple regression would give the formula a real empirical basis.
         </p>
         <p>
-          <strong>The Readiness Score weights.</strong> The scoring formula is somewhat arbitrary — I calibrated it by feel rather than against real interview pass rate data. A future version would instrument actual outcomes and adjust weights accordingly.
-        </p>
-        <p>
-          h1nt is live at <a href="https://h1nt.vercel.app" target="_blank" rel="noreferrer">h1nt.vercel.app</a>. The source is on <a href="https://github.com/benlee-1/h1nt" target="_blank" rel="noreferrer">GitHub</a>. If you use it and have feedback, I want to hear it.
+          h1nt is live at <a href="https://h1nt.vercel.app" target="_blank" rel="noreferrer">h1nt.vercel.app</a>. Source on <a href="https://github.com/benlee-1/h1nt" target="_blank" rel="noreferrer">GitHub</a>. If you use it and have thoughts, I want to hear them.
         </p>
 
       </article>
