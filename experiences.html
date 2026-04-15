@@ -27,6 +27,7 @@
         <a href="https://linkedin.com/in/yeongbin-lee" target="_blank" rel="noreferrer"
           >LinkedIn</a
         >
+        <a href="blog.html">Blog</a>
       </nav>
     </header>
 
@@ -75,6 +76,9 @@
             building, and scaling APIs and distributed services for financial
             services and enterprise applications. Strong focus on translating
             product requirements into robust systems that are reliable under load.
+            Alongside enterprise engineering, I independently ship full-stack
+            products — from concept to App Store — with a focus on clean product
+            thinking and engineering craft.
           </p>
           <ul>
             <li>
@@ -189,17 +193,47 @@
 
         <article id="stop-6" class="stop-panel glass line-build" data-stop-panel>
           <h3>Selected Projects</h3>
-          <p class="stop-meta">Recent Build Highlights</p>
+          <p class="stop-meta">Indie Development · 2024–Present</p>
           <p>
-            Applied project work focused on backend patterns and integration
-            reliability.
+            Full-stack independent projects shipped from zero to production, each
+            solving a real problem with a clean product layer over non-trivial
+            engineering.
           </p>
-          <ul>
-            <li>
-              Partner Integration Platform: Node.js/TypeScript backend for
-              third-party integrations with retry and failure recovery logic.
-            </li>
-          </ul>
+
+          <div class="project-entry">
+            <div class="project-entry-header">
+              <strong class="project-entry-title">Great Teacher Onigiri</strong>
+              <span class="project-entry-status">Pre-launch · iOS / Android / Web</span>
+            </div>
+            <p>Gamified GTO poker learning app — "Duolingo for poker theory." 5-world curriculum, 91+ interactive slides, a real poker engine for Boss Battles, and a Player Profile tracking 7 live metrics (VPIP, PFR, aggression factor, and more).</p>
+            <ul>
+              <li>React 19 + Vite, Supabase auth/database, RevenueCat for iOS IAP (Onigiri Pro $9.99/mo), and Capacitor for native iOS/Android packaging.</li>
+              <li>Freemium hearts system gates learning velocity — not content access — to reduce churn friction while monetizing power users.</li>
+              <li>Fixed three non-trivial production bugs: SPA 404 via Vercel rewrites, AppDelegate build failure under Xcode 16 via protocol cast, and a blank-screen race condition resolved through state machine redesign.</li>
+            </ul>
+            <div class="project-links">
+              <a class="proj-link" href="https://github.com/benlee-1/Great-Teacher-Onigiri" target="_blank" rel="noreferrer">GitHub</a>
+              <a class="proj-link proj-link-primary" href="blog/great-teacher-onigiri.html">Case Study →</a>
+            </div>
+          </div>
+
+          <div class="project-entry">
+            <div class="project-entry-header">
+              <strong class="project-entry-title">h1nt</strong>
+              <span class="project-entry-status">Live · h1nt.vercel.app</span>
+            </div>
+            <p>AI-powered technical interview prep with a personalized study plan, a streaming "Tiger Parent" Claude Sonnet tutor, Monaco code editor for LeetCode questions, and a graded mock interview locked behind a 70+ Readiness Score.</p>
+            <ul>
+              <li>Next.js 16 App Router (TypeScript), Vercel AI SDK v6 streaming, Zustand, shadcn/ui, and Claude Sonnet 4.6 as the AI backbone.</li>
+              <li>Smart question ordering: weak areas first → difficulty → failed review. "I Don't Know" teach mode explains before grading.</li>
+              <li>Fixed empty-stream bug by switching <code>/api/tutor</code> from <code>toUIMessageStreamResponse()</code> to <code>toTextStreamResponse()</code>.</li>
+            </ul>
+            <div class="project-links">
+              <a class="proj-link" href="https://h1nt.vercel.app" target="_blank" rel="noreferrer">Live Demo</a>
+              <a class="proj-link" href="https://github.com/benlee-1/h1nt" target="_blank" rel="noreferrer">GitHub</a>
+              <a class="proj-link proj-link-primary" href="blog/h1nt.html">Case Study →</a>
+            </div>
+          </div>
         </article>
 
         <article id="stop-7" class="stop-panel glass line-core" data-stop-panel>

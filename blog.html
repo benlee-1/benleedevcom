@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ben Lee | Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Outfit:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="ambient-bg" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="grid"></span>
+    </div>
+
+    <header class="site-header glass">
+      <a class="brand" href="index.html">Ben Lee</a>
+      <nav class="top-nav">
+        <a href="index.html">Home</a>
+        <a href="experiences.html">Experience Map</a>
+        <a href="blog.html" aria-current="page">Blog</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero section reveal">
+        <p class="eyebrow" style="--delay: 0ms">Writing</p>
+        <h1 style="--delay: 120ms">Build logs and technical deep dives.</h1>
+        <p class="lead" style="--delay: 240ms">
+          Case studies and behind-the-scenes engineering notes from shipping
+          independent projects.
+        </p>
+      </section>
+
+      <div class="section-divider" aria-hidden="true"></div>
+
+      <section id="blog-list" class="section reveal">
+        <h2>Posts</h2>
+        <div class="card-grid">
+
+          <a
+            class="glass blog-card"
+            href="blog/h1nt.html"
+            style="--delay: 0ms"
+          >
+            <div class="blog-card-meta">
+              <span class="post-date">April 2026</span>
+              <span class="reading-time">8 min read</span>
+            </div>
+            <h3>h1nt: Building a Tiger Parent AI Interview Coach</h3>
+            <p>
+              How I built an AI-powered interview prep tool with a streaming
+              Claude tutor, Monaco code editor, and a Readiness Score gate —
+              including the empty-stream bug that nearly broke it.
+            </p>
+            <div class="blog-card-tags">
+              <span class="blog-tag">Next.js</span>
+              <span class="blog-tag">AI SDK</span>
+              <span class="blog-tag">Claude</span>
+              <span class="blog-tag">TypeScript</span>
+            </div>
+            <span class="blog-read-more">Read case study →</span>
+          </a>
+
+          <a
+            class="glass blog-card"
+            href="blog/great-teacher-onigiri.html"
+            style="--delay: 150ms"
+          >
+            <div class="blog-card-meta">
+              <span class="post-date">March 2026</span>
+              <span class="reading-time">10 min read</span>
+            </div>
+            <h3>Great Teacher Onigiri: Shipping a Poker Theory App to the App Store</h3>
+            <p>
+              From concept to App Store submission: how I built a gamified GTO
+              poker learning app with React 19, Supabase, Capacitor, and a real
+              poker engine — and the three production bugs that taught me the most.
+            </p>
+            <div class="blog-card-tags">
+              <span class="blog-tag">React</span>
+              <span class="blog-tag">Capacitor</span>
+              <span class="blog-tag">Supabase</span>
+              <span class="blog-tag">Mobile</span>
+            </div>
+            <span class="blog-read-more">Read case study →</span>
+          </a>
+
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Ben Lee</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ben Lee | Great Teacher Onigiri — Case Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Outfit:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="ambient-bg" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="grid"></span>
+    </div>
+
+    <header class="site-header glass">
+      <a class="brand" href="../index.html">Ben Lee</a>
+      <nav class="top-nav">
+        <a href="../index.html">Home</a>
+        <a href="../experiences.html">Experience Map</a>
+        <a href="../blog.html">Blog</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="post-header reveal">
+        <p class="eyebrow" style="--delay: 0ms">Case Study · March 2026</p>
+        <h1 style="--delay: 120ms">
+          Great Teacher Onigiri: Shipping a Poker Theory App to the App Store
+        </h1>
+        <div class="post-meta" style="--delay: 200ms">
+          <span class="post-date">March 2026</span>
+          <span class="reading-time">10 min read</span>
+        </div>
+        <div class="post-tags" style="--delay: 260ms">
+          <span class="blog-tag">React 19</span>
+          <span class="blog-tag">Capacitor</span>
+          <span class="blog-tag">Supabase</span>
+          <span class="blog-tag">RevenueCat</span>
+          <span class="blog-tag">Mobile</span>
+        </div>
+      </div>
+
+      <article class="post-body">
+
+        <h2>The Problem Worth Solving</h2>
+        <p>
+          Game Theory Optimal (GTO) poker is the study of unexploitable strategy — the mathematical ideal your decisions should approximate. Most serious players know they should learn it. Almost none actually do, because the resources are terrible.
+        </p>
+        <p>
+          Solvers like PioSOLVER cost hundreds of dollars and output raw strategy trees that require significant interpretation. Training courses are dense video lectures. Charts are static. None of them close the loop on whether you actually retained anything.
+        </p>
+        <p>
+          The insight behind Great Teacher Onigiri is simple: the Duolingo model is a genuinely good fit for poker theory. Short feedback loops. Immediate correctness signals. Spaced repetition baked into the curriculum structure. The best poker learners don't memorize charts — they build intuitions through repetition with feedback, and that's exactly what gamification delivers.
+        </p>
+        <p>
+          So I built it. "Duolingo for GTO poker," with a mascot, a hearts system, Boss Battles, and a Player Profile that tracks your actual leaks.
+        </p>
+
+        <h2>Architecture Decisions</h2>
+        <p>
+          The key technology choices were driven by a single constraint: this needed to ship on iOS and Android as a native app, while remaining a React web app at its core.
+        </p>
+
+        <h3>React 19 + Vite</h3>
+        <p>
+          Modern React with fast HMR and excellent Capacitor compatibility. React 19's concurrent features weren't strictly necessary for v1 but the improved Suspense model made handling async auth state cleaner. Vite's build output is what Capacitor wraps — keeping the build pipeline simple was worth a lot.
+        </p>
+
+        <h3>Capacitor for Native Packaging</h3>
+        <p>
+          Capacitor wraps your web app in a native iOS/Android shell and gives you access to native APIs through plugins. The tradeoff versus React Native is real: the community is smaller, generated native code is fragile, and you'll hit Xcode incompatibilities that take time to diagnose. The upside is that you're writing a web app first — the full Tailwind/React ecosystem works without modification, and the web version is a first-class deployment target.
+        </p>
+
+        <h3>Supabase</h3>
+        <p>
+          Postgres + auth + Row Level Security in one service. User session data (hand history, XP, metric deltas) needed isolation by user ID, and Supabase's RLS made that clean to enforce at the database layer without middleware. OAuth via Google and Apple is handled by Supabase's auth module, which reduced the auth surface area considerably.
+        </p>
+
+        <h3>RevenueCat</h3>
+        <p>
+          In-app purchase receipt validation and entitlement sync. The alternative was building the IAP flow directly against StoreKit (iOS) and Google Play Billing, validating receipts server-side, and syncing entitlements into Supabase manually. RevenueCat handles all of that — you get a webhook that fires on subscription events, and your app queries entitlements through the RevenueCat SDK. Significant complexity removed.
+        </p>
+
+        <h3>The Freemium Hearts Model</h3>
+        <p>
+          Onigiri Pro ($9.99/mo or $49.99/yr) unlocks all five worlds, unlimited hearts, unlimited daily drills, and the full metrics dashboard. Free users get World 1, 5 hearts that regenerate one every 30 minutes, and 10 drills per day.
+        </p>
+        <p>
+          The design decision I'm most deliberate about: hearts gate <strong>velocity, not content visibility</strong>. Free users can see that Worlds 2–5 exist. They can see their Player Profile metrics. They just can't burn through lessons at unlimited speed. This means the "aha moment" — completing World 1 and seeing their archetype — happens before they ever hit the paywall. Gating the experience before the hook is a conversion killer.
+        </p>
+
+        <h2>Building the Curriculum</h2>
+        <p>
+          Five worlds, each covering a pillar of GTO fundamentals:
+        </p>
+        <ul>
+          <li><strong>World 1 — Rice Ball Basics:</strong> hand rankings, position, pot odds, starting ranges, fold equity</li>
+          <li><strong>World 2 — Postflop Play:</strong> continuation betting, board texture, equity realization</li>
+          <li><strong>World 3 — Range Construction:</strong> balanced ranges, blockers, polarization</li>
+          <li><strong>World 4 — Multiway Dynamics:</strong> multiway pot adjustments, range disadvantage</li>
+          <li><strong>World 5 — Advanced Theory:</strong> mixed strategies, indifference, bankroll management</li>
+        </ul>
+        <p>
+          Each lesson is a sequence of slides rendered by a shared <code>LessonViewer</code> component. Slides are static JS objects — a type field (<code>text</code>, <code>visual</code>, <code>quiz</code>, <code>drill</code>) plus content props. This means all lesson content ships with the app bundle: zero backend required for any curriculum data, instant load, easy content updates via PR.
+        </p>
+        <p>
+          The Practice Hub adds interactive drill modes on top of lessons: a Preflop Trainer (random hand + position against GTO charts, with streak tracking and VPIP/PFR stats), Hand Reading scenarios, Pot Odds visualizations, and Outs & Equity exercises. All drills feed the Player Profile.
+        </p>
+
+        <h2>The Boss Battle Engine</h2>
+        <p>
+          Each world ends with a Boss Battle: a multi-hand poker session against an AI opponent, with performance feedback after each hand. This is the engineering centerpiece.
+        </p>
+
+        <h3>Hand Evaluation</h3>
+        <p>
+          The engine evaluates the best 5-card hand from 7 cards (2 hole cards + 5 community cards). All 21 combinations of C(7,2) are evaluated against the hand ranking hierarchy: straight flush, four of a kind, full house, flush, straight, three of a kind, two pair, pair, high card. Kicker logic handles ties. The evaluator runs entirely in the browser — no server round-trip on every street.
+        </p>
+
+        <h3>AI Opponents</h3>
+        <p>
+          The AI opponents are decision trees, not neural nets. Each opponent has a configurable aggression profile, a positional awareness weight, and a range model that approximates how a real player at their skill tier would construct ranges. Three difficulty tiers: a calling station (over-VPIP, low fold equity), a TAG (tight-aggressive, straightforward), and a GTO-approximator (balanced ranges, position-aware sizing). The opponents are intentionally exploitable in known ways — the game is teaching you to identify and punish those patterns.
+        </p>
+
+        <h3>Coaching Feedback</h3>
+        <p>
+          After each hand, the engine compares the player's action sequence to the GTO-optimal line for that spot. The delta is translated into plain language: "You called on the flop with 28% equity — you needed 33% to break even. Consider folding or raising here." This feedback loop is the core learning mechanism. Seeing the gap between what you did and what you should have done, in plain English, after every hand, is what builds intuition.
+        </p>
+
+        <h2>Player Profile and Leak Detection</h2>
+        <p>
+          Every action in every Boss Battle and drill session feeds seven tracked metrics:
+        </p>
+        <ul>
+          <li><strong>VPIP</strong> — Voluntarily Put money In Pot (preflop call/raise %)</li>
+          <li><strong>PFR</strong> — Preflop Raise percentage</li>
+          <li><strong>Aggression Factor</strong> — (bets + raises) / calls</li>
+          <li><strong>WTSD</strong> — Went To ShowDown rate</li>
+          <li><strong>W$SD</strong> — Won money at ShowDown rate</li>
+          <li><strong>3-Bet %</strong> — Re-raise frequency preflop</li>
+          <li><strong>Fold to 3-Bet</strong> — How often you fold to a re-raise</li>
+        </ul>
+        <p>
+          These are derived from session hand history stored in Supabase. The leak detection system cross-references metric ranges against known leak archetypes. High VPIP + low aggression factor = calling station. Low VPIP + low PFR = too tight/passive. High W$SD + low WTSD = not getting to showdown enough. The "Top 3 Leaks" panel surfaces the most actionable gaps and links directly to the drill mode that targets each one.
+        </p>
+
+        <div class="post-callout">
+          <p>The Player Profile doesn't tell you what to study next — it shows you what your hands have already decided for you. That shift from prescription to diagnosis is what makes it feel like a coach rather than a checklist.</p>
+        </div>
+
+        <h2>Three Bugs That Taught Me the Most</h2>
+
+        <h3>1. The SPA 404</h3>
+        <p>
+          After deploying to Vercel, navigating directly to <code>/worlds/1</code> returned a 404. The app worked fine when navigating from the home screen, but any hard refresh or direct URL hit was dead.
+        </p>
+        <p>
+          Root cause: Vercel serves static files by matching URL paths to files on disk. <code>/worlds/1</code> isn't a file — it's a client-side route handled by React Router. The server never knew about it.
+        </p>
+        <p>
+          Fix: <code>vercel.json</code> with a catch-all rewrite:
+        </p>
+        <pre><code>{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}</code></pre>
+        <p>
+          This tells Vercel to serve <code>index.html</code> for any path that doesn't match a real file, letting React Router take over. Lesson: every SPA deployed to a static host needs this configuration. It's easy to miss because local dev servers handle it automatically.
+        </p>
+
+        <h3>2. The AppDelegate Xcode 16 Build Error</h3>
+        <p>
+          After updating to Xcode 16, the iOS build broke with a cryptic overload resolution error in <code>AppDelegate.swift</code> — a file Capacitor generates, not one I wrote.
+        </p>
+        <p>
+          Root cause: Xcode 16 introduced stricter protocol conformance checking. Capacitor's generated <code>AppDelegate</code> called a method on a <code>UIApplicationDelegate</code> reference, but Xcode 16 couldn't resolve the overload without an explicit protocol cast.
+        </p>
+        <p>
+          Fix: adding an explicit cast — <code>(application.delegate as? AppDelegate)?.someMethod()</code> — resolved the ambiguity. The Capacitor team patched this in a subsequent release.
+        </p>
+        <p>
+          Lesson: generated native code is the most fragile part of a Capacitor project. Before updating Xcode or Capacitor, check the release notes and open GitHub issues. The Capacitor community is small enough that obscure build errors usually have an open thread.
+        </p>
+
+        <h3>3. The Blank-Screen Race Condition</h3>
+        <p>
+          After the Supabase OAuth callback, the app occasionally showed a blank white screen. Not a crash — no error in the console. Just white.
+        </p>
+        <p>
+          Root cause: the Supabase auth listener fired and updated global state before the component tree finished mounting. The state update applied, then the initial render wiped it. The auth listener fired again, but the component was already in an inconsistent state.
+        </p>
+        <p>
+          Fix: redesigned the auth state as an explicit three-state machine — <code>loading | authenticated | unauthenticated</code> — with the component tree gated behind the <code>loading</code> state resolving. Nothing renders until we know the auth state. This eliminated the race entirely.
+        </p>
+        <p>
+          Lesson: auth state is fundamentally async. Treating it as a boolean (<code>isLoggedIn: true/false</code>) misses the third state — <em>we don't know yet</em>. Model it as a three-state machine and gate your renders accordingly.
+        </p>
+
+        <h2>What's Next</h2>
+        <p>
+          The app is currently awaiting App Store IAP approval for Onigiri Pro. The web version is live and fully playable. World 1 is complete with all 12 lessons, the Practice Hub, and the Boss Battle.
+        </p>
+        <p>
+          On the roadmap: a leaderboard for Boss Battle scores, daily challenge mode, a hand replay feature for reviewing past Boss Battle hands, and Worlds 4–5 content completion.
+        </p>
+        <p>
+          The full source is on <a href="https://github.com/benlee-1/Great-Teacher-Onigiri" target="_blank" rel="noreferrer">GitHub</a>. It's an active project — PRs and issues welcome.
+        </p>
+
+      </article>
+
+      <div class="post-nav">
+        <a class="btn btn-ghost" href="../blog.html">← All posts</a>
+        <a class="btn btn-ghost" href="h1nt.html">Next: h1nt →</a>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Ben Lee</p>
+    </footer>
+
+    <script src="../script.js"></script>
+  </body>
+</html>
